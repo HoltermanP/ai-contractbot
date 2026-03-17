@@ -25,7 +25,7 @@ export function DocumentList() {
       const response = await fetch("/api/documents");
       if (response.ok) {
         const data = await response.json();
-        setDocuments(data.documents);
+        setDocuments(Array.isArray(data) ? data : (data?.documents ?? []));
       }
     } catch (error) {
       console.error("Error fetching documents:", error);

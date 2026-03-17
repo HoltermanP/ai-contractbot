@@ -52,8 +52,14 @@ export function DocumentUpload() {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Upload mislukt");
+        let errorMessage = "Upload mislukt";
+        try {
+          const errorBody = await response.json();
+          errorMessage = errorBody?.error ?? errorMessage;
+        } catch {
+          errorMessage = `${response.status}: ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
       }
 
       setMessage({ type: "success", text: "Document succesvol geüpload!" });
