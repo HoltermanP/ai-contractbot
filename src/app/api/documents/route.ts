@@ -29,13 +29,13 @@ export async function GET(request: NextRequest) {
     });
 
     // Transform documents to include type
-    const transformedDocuments = documents.map(doc => ({
+    const transformedDocuments = documents.map((doc) => ({
       id: doc.id,
       title: doc.title,
       filename: doc.filename,
       uploadedAt: doc.uploadedAt.toISOString(),
       fileSize: doc.fileSize,
-      type: doc.mimeType.split('/')[1]?.toUpperCase() || 'FILE',
+      type: (doc.mimeType?.split("/")[1] ?? "file").toUpperCase(),
       user: doc.user,
     }));
 

@@ -2,18 +2,24 @@ import { put, del } from "@vercel/blob";
 import { writeFile, mkdir, unlink } from "fs/promises";
 import { join } from "path";
 
-const isProductionWithBlob =
-  process.env.NODE_ENV === "production" && process.env.BLOB_READ_WRITE_TOKEN;
+const isProduction = process.env.NODE_ENV === "production";
+const hasBlobToken = !!process.env.BLOB_READ_WRITE_TOKEN;
 
 /**
  * Slaat een bestand op: lokaal in uploads/ of in productie in Vercel Blob.
+ * In productie (bijv. Vercel) is het bestandssysteem read-only; daar is BLOB_READ_WRITE_TOKEN verplicht.
  * Retourneert het opgeslagen pad (lokaal) of de blob URL (productie).
  */
 export async function storeFile(
   buffer: Buffer,
   filename: string
 ): Promise<string> {
-  if (isProductionWithBlob) {
+  if (isProduction) {
+    if (!hasBlobToken) {
+      throw new Error(
+        "BLOB_READ_WRITE_TOKEN ontbreekt. Zet in Vercel: Storage → Blob store aanmaken, token toevoegen aan Environment Variables."
+      );
+    }
     const pathname = `documents/${Date.now()}-${filename}`;
     const blob = await put(pathname, buffer, {
       access: "private",

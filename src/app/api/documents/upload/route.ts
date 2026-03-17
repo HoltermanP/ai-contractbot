@@ -93,10 +93,12 @@ export async function POST(request: NextRequest) {
       message: "Document succesvol geüpload",
     });
   } catch (error) {
+    const message = error instanceof Error ? error.message : "Fout bij uploaden document";
     console.error("Error uploading document:", error);
+    const isConfigError = message.includes("BLOB_READ_WRITE_TOKEN");
     return NextResponse.json(
-      { error: "Fout bij uploaden document" },
-      { status: 500 }
+      { error: message },
+      { status: isConfigError ? 503 : 500 }
     );
   }
 }
