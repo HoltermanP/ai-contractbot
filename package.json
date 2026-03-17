@@ -44,7 +44,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.553.0",
-    "next": "^15.0.0",
+    "next": "15.0.7",
     "next-auth": "^5.0.0-beta.25",
     "openai": "^4.52.0",
     "pdf-parse": "^1.1.1",
