@@ -93,9 +93,17 @@ export async function GET(request: NextRequest) {
       recentDocuments,
     });
   } catch (error) {
-    console.error("Error fetching dashboard data:", error);
+    const message = error instanceof Error ? error.message : "Onbekende fout";
+    const stack = error instanceof Error ? error.stack : undefined;
+    console.error("Error fetching dashboard data:", message, stack ?? error);
+
+    // In development: toon de echte fout zodat je kunt debuggen
+    const isDev = process.env.NODE_ENV === "development";
     return NextResponse.json(
-      { error: "Fout bij ophalen dashboard gegevens" },
+      {
+        error: "Fout bij ophalen dashboard gegevens",
+        ...(isDev && { detail: message }),
+      },
       { status: 500 }
     );
   }

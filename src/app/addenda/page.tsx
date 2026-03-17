@@ -80,7 +80,7 @@ export default function AddendaPage() {
       const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
-        setAddenda(data);
+        setAddenda(Array.isArray(data) ? data : []);
       }
     } catch (e) {
       console.error("Error fetching addenda:", e);

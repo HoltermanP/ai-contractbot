@@ -69,8 +69,15 @@ export default function AnalyticsPage() {
     try {
       const response = await fetch("/api/analytics");
       if (response.ok) {
-        const analyticsData = await response.json();
-        setData(analyticsData);
+        const raw = await response.json();
+        setData({
+          documentCount: typeof raw.documentCount === "number" ? raw.documentCount : 0,
+          frequentQuestions: Array.isArray(raw.frequentQuestions) ? raw.frequentQuestions : [],
+          ambiguities: Array.isArray(raw.ambiguities) ? raw.ambiguities : [],
+          uavParagraphs: Array.isArray(raw.uavParagraphs) ? raw.uavParagraphs : [],
+          contractCategories: Array.isArray(raw.contractCategories) ? raw.contractCategories : [],
+          complexTopics: Array.isArray(raw.complexTopics) ? raw.complexTopics : [],
+        });
       }
     } catch (error) {
       console.error("Error fetching analytics:", error);

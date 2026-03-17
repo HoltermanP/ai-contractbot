@@ -80,8 +80,16 @@ export function Dashboard() {
       try {
         const response = await fetch("/api/dashboard");
         if (response.ok) {
-          const dashboardData = await response.json();
-          setData(dashboardData);
+          const raw = await response.json();
+          // Normaliseer zodat .length nooit op undefined wordt gelezen
+          setData({
+            frequentQuestions: Array.isArray(raw.frequentQuestions) ? raw.frequentQuestions : [],
+            ambiguities: Array.isArray(raw.ambiguities) ? raw.ambiguities : [],
+            complexTopics: Array.isArray(raw.complexTopics) ? raw.complexTopics : [],
+            documentCount: typeof raw.documentCount === "number" ? raw.documentCount : 0,
+            recentConversations: Array.isArray(raw.recentConversations) ? raw.recentConversations : [],
+            recentDocuments: Array.isArray(raw.recentDocuments) ? raw.recentDocuments : [],
+          });
         }
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
