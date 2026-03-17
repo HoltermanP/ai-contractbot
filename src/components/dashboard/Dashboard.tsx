@@ -83,7 +83,12 @@ export function Dashboard() {
           const raw = await response.json();
           // Normaliseer zodat .length nooit op undefined wordt gelezen
           setData({
-            frequentQuestions: Array.isArray(raw.frequentQuestions) ? raw.frequentQuestions : [],
+            frequentQuestions: (Array.isArray(raw.frequentQuestions) ? raw.frequentQuestions : []).map(
+              (q: { query?: string; count?: number }) => ({
+                query: typeof q?.query === "string" ? q.query : "",
+                count: typeof q?.count === "number" ? q.count : 0,
+              })
+            ),
             ambiguities: Array.isArray(raw.ambiguities) ? raw.ambiguities : [],
             complexTopics: Array.isArray(raw.complexTopics) ? raw.complexTopics : [],
             documentCount: typeof raw.documentCount === "number" ? raw.documentCount : 0,
@@ -227,8 +232,8 @@ export function Dashboard() {
               ) : (
                 <ul className="space-y-2">
                   {data.frequentQuestions.slice(0, 4).map((q, i) => (
-                    <li key={i} className="text-sm text-foreground truncate" title={q.query}>
-                      {q.query.length > 50 ? `${q.query.slice(0, 50)}…` : q.query}
+                    <li key={i} className="text-sm text-foreground truncate" title={q.query ?? ""}>
+                      {(q.query ?? "").length > 50 ? `${(q.query ?? "").slice(0, 50)}…` : (q.query ?? "")}
                       <span className="text-muted-foreground ml-1">({q.count}x)</span>
                     </li>
                   ))}
