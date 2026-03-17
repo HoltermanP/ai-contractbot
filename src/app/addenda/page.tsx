@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -71,7 +71,7 @@ export default function AddendaPage() {
   const [submitting, setSubmitting] = useState(false);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
 
-  const fetchAddenda = async () => {
+  const fetchAddenda = useCallback(async () => {
     try {
       const url =
         filterDocumentId && filterDocumentId !== "all"
@@ -87,7 +87,7 @@ export default function AddendaPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filterDocumentId]);
 
   const fetchDocuments = async () => {
     try {
@@ -104,7 +104,7 @@ export default function AddendaPage() {
   useEffect(() => {
     setLoading(true);
     fetchAddenda();
-  }, [filterDocumentId]);
+  }, [fetchAddenda]);
 
   useEffect(() => {
     fetchDocuments();
