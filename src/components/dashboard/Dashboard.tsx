@@ -87,9 +87,12 @@ export function Dashboard() {
             ambiguities: Array.isArray(raw.ambiguities) ? raw.ambiguities : [],
             complexTopics: Array.isArray(raw.complexTopics) ? raw.complexTopics : [],
             documentCount: typeof raw.documentCount === "number" ? raw.documentCount : 0,
-            recentConversations: (Array.isArray(raw.recentConversations) ? raw.recentConversations : []).map((c: { id: string; title?: string | null; updatedAt: string; messages?: unknown[] }) => ({
+            recentConversations: (Array.isArray(raw.recentConversations) ? raw.recentConversations : []).map((c: { id: string; title?: string | null; updatedAt: string; messages?: Array<{ content?: string | null }> }) => ({
               ...c,
-              messages: Array.isArray(c.messages) ? c.messages : [],
+              messages: (Array.isArray(c.messages) ? c.messages : []).map((m) => ({
+                ...m,
+                content: typeof (m as { content?: string | null }).content === "string" ? (m as { content: string }).content : "",
+              })),
             })),
             recentDocuments: Array.isArray(raw.recentDocuments) ? raw.recentDocuments : [],
           });
@@ -394,8 +397,8 @@ export function Dashboard() {
                           </div>
                           {conversation.messages.length > 0 && (
                             <p className="text-sm text-muted-foreground truncate line-clamp-2">
-                              {conversation.messages[0].content.substring(0, 80)}
-                              {conversation.messages[0].content.length > 80 ? "…" : ""}
+                              {(conversation.messages[0]?.content ?? "").substring(0, 80)}
+                              {(conversation.messages[0]?.content ?? "").length > 80 ? "…" : ""}
                             </p>
                           )}
                           <Badge variant="secondary" className="text-xs bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/50 dark:text-emerald-400 dark:border-emerald-700 mt-2">
