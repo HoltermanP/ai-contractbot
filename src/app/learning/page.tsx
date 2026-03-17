@@ -204,18 +204,33 @@ export default function LearningPage() {
   }, [progressList]);
 
   const lessons: Lesson[] = useMemo(() => {
-    return apiModules.map((m) => ({
-      id: m.id,
-      title: m.title,
-      description: m.description,
-      paragraph: m.paragraph || m.type,
-      duration: m.duration,
-      xpReward: m.xpReward,
-      completed: progressMap[m.id]?.completed ?? false,
-      locked: false,
-      type: m.type,
-      content: m.content,
-    }));
+    return apiModules.map((m) => {
+      const raw = m.content;
+      const sections = Array.isArray(raw?.sections) ? raw.sections : [];
+      const quiz = Array.isArray(raw?.quiz) ? raw.quiz : [];
+      type SectionInput = { title?: string; content?: string; keyPoints?: string[]; examples?: Array<{ title?: string; scenario?: string; solution?: string; calculation?: string }> };
+      const normalizedSections: Lesson["content"]["sections"] = sections.map((s: SectionInput) => ({
+        title: s?.title ?? "",
+        content: s?.content ?? "",
+        keyPoints: Array.isArray(s?.keyPoints) ? s.keyPoints : [],
+        examples: Array.isArray(s?.examples) ? s.examples as Lesson["content"]["sections"][0]["examples"] : [],
+      }));
+      return {
+        id: m.id,
+        title: m.title,
+        description: m.description,
+        paragraph: m.paragraph || m.type,
+        duration: m.duration,
+        xpReward: m.xpReward,
+        completed: progressMap[m.id]?.completed ?? false,
+        locked: false,
+        type: m.type,
+        content: {
+          sections: normalizedSections,
+          quiz: quiz as Lesson["content"]["quiz"],
+        },
+      };
+    });
   }, [apiModules, progressMap]);
 
   const totalXPFromProgress = useMemo(

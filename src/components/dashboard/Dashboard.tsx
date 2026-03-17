@@ -87,7 +87,10 @@ export function Dashboard() {
             ambiguities: Array.isArray(raw.ambiguities) ? raw.ambiguities : [],
             complexTopics: Array.isArray(raw.complexTopics) ? raw.complexTopics : [],
             documentCount: typeof raw.documentCount === "number" ? raw.documentCount : 0,
-            recentConversations: Array.isArray(raw.recentConversations) ? raw.recentConversations : [],
+            recentConversations: (Array.isArray(raw.recentConversations) ? raw.recentConversations : []).map((c: { id: string; title?: string | null; updatedAt: string; messages?: unknown[] }) => ({
+              ...c,
+              messages: Array.isArray(c.messages) ? c.messages : [],
+            })),
             recentDocuments: Array.isArray(raw.recentDocuments) ? raw.recentDocuments : [],
           });
         }
